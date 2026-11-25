@@ -45,29 +45,68 @@ function getQ(n){
   let end=lines.findIndex((x,i)=>i>start&&/^## Q[1-8]\b/.test(x));
   return lines.slice(start,end<0?lines.length:end).join("\n");
 }
-function normalizeMathMarkdown(source){
-  // Protect fenced code, then convert the repository's legacy [ ... ] display
-  // math blocks into KaTeX auto-render delimiters. A single "$" here would
-  // incorrectly create inline math and break multiline equations.
-  const chunks=String(source||"").split(/(\`\`\`[\s\S]*?\`\`\`)/g);
-  return chunks.map((chunk,i)=>{
-    if(i%2===1) return chunk;
-    let out=chunk.replace(/^\[\s*$/gm,"\\[").replace(/^\]\s*$/gm,"\\]");
-    out=out.replace(/(?<!\\)qquad/g,"\\qquad");
-    // Preserve prose parentheses. Only wrap parenthetical content that has
-    // unmistakable mathematical notation and is not already delimited.
-    out=out.replace(/\(([^()\n]{1,140})\)/g,(whole,inside,offset,text)=>{
-      const before=text.slice(Math.max(0,offset-2),offset);
-      const after=text.slice(offset+whole.length,offset+whole.length+2);
-      if(before.includes("\\") || after.includes("\\")) return whole;
-      const t=inside.trim();
-      const looksMath=/\\[a-zA-Z]+|[_^=<>≤≥∑παβγ]|^[a-zA-Z]\s*=\s*[-\d]/.test(t);
-      return looksMath ? "\\("+t+"\\)" : whole;
-    });
-    return out;
-  }).join("");
+function markdown(source){
+  // Render math BEFORE Markdown parsing. This prevents marked from treating
+  // LaTeX underscores, braces, backslashes, and multiline equations as prose.
+  let text=String(source||"");
+  const rendered=[];
+  const put=(latex,display)=>{
+    const index=rendered.length;
+    let html;
+    try{
+      html=window.katex
+        ? window.katex.renderToString(latex.trim(),{
+            displayMode:display,
+            throwOnError:false,
+            strict:"ignore",
+            trust:false
+          })
+        : esc(latex);
+    }catch(error){
+      html='<span class="math-error">'+esc(latex)+'</span>';
+    }
+    rendered.push(display
+      ? '<div class="math-rendered math-display">'+html+'</div>'
+      : '<span class="math-rendered math-inline">'+html+'</span>');
+    return 'MATHRENDERPLACEHOLDER'+index+'ENDTOKEN';
+  };
+
+  // Keep fenced code untouched; math-looking text inside code is not math.
+  const code=[];
+  text=text.replace(/(\`\`\`[\s\S]*?\`\`\`|`[^`]*`)/g,block=>{
+    const token='CODEBLOCKPLACEHOLDER'+code.length+'ENDTOKEN';
+    code.push(block);
+    return token;
+  });
+
+  // Legacy display blocks used throughout the study notes: [ on its own line,
+  // LaTeX body, then ] on its own line.
+  text=text.replace(/^\[\s*\r?\n([\s\S]*?)\r?\n\]\s*$/gm,(_,latex)=>put(latex,true));
+
+  // Standard explicit display delimiters.
+  text=text.replace(/\$\$([\s\S]+?)\$\$/g,(_,latex)=>put(latex,true));
+  text=text.replace(/\\\[([\s\S]+?)\\\]/g,(_,latex)=>put(latex,true));
+
+  // Standard explicit inline delimiters.
+  text=text.replace(/\\\(([\s\S]+?)\\\)/g,(_,latex)=>put(latex,false));
+  text=text.replace(/(^|[^\\])\$([^\$\n]+?)\$(?!\$)/g,(_,prefix,latex)=>prefix+put(latex,false));
+
+  // Existing notes sometimes put mathematical expressions in parentheses
+  // without delimiters, e.g. (A_1=A_2=[0,\infty)). Convert only clear math.
+  text=text.replace(/\(([^()\n]{1,180})\)/g,(whole,inside)=>{
+    const t=inside.trim();
+    const mathematical=/(?:\\[a-zA-Z]+|[_^=<>≤≥∑παβγ]|(?:[A-Za-z]\s*=\s*[-\d]))/.test(t);
+    return mathematical ? put(t,false) : whole;
+  });
+
+  // Repair the source typo "qquad" where the leading slash was omitted.
+  text=text.replace(/(?<!\\)\bqquad\b/g,'\\qquad');
+
+  let html=marked.parse(text);
+  html=html.replace(/MATHRENDERPLACEHOLDER(\d+)ENDTOKEN/g,(_,i)=>rendered[Number(i)]||"");
+  html=html.replace(/CODEBLOCKPLACEHOLDER(\d+)ENDTOKEN/g,(_,i)=>code[Number(i)]||"");
+  return html;
 }
-function markdown(s){return marked.parse(normalizeMathMarkdown(s||""));}
 function nav(){document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===state.tab));}
 function renderLearn(){const p=loadProgress(),q=state.q,e=exam[q];app.innerHTML='<div class="grid"><aside><div class="muted">HOMEWORK 3 · 문제 선택</div>'+Array.from({length:8},(_,i)=>'<button data-q="'+(i+1)+'" class="'+(q===i+1?'active':'')+'">Q'+(i+1)+' · '+esc(exam[i+1].type.split(" · ")[0])+'</button>').join("")+'<hr><label class="check"><input id="done" type="checkbox" '+(p.done.includes(q)?'checked':'')+'> 이 문제 학습 완료</label></aside><section class="panel"><div class="qtitle"><div><span class="tag">Q'+q+'</span> <span class="muted">'+esc(e.type)+'</span></div><div class="mode"><button class="btn '+(state.mode==="full"?"active":"")+'" data-mode="full">Full Solution</button><button class="btn '+(state.mode==="exam"?"active":"")+'" data-mode="exam">Exam Solution</button></div></div><div class="warning">학습 순서: 영문 조건 판독 → 풀이 구조 결정 → 수식 도출 → 검산. Exam Solution은 최종 암기용이 아니라 Full Solution을 이해한 뒤 재현하는 용도입니다.</div><div class="doc" id="lesson">'+(state.mode==="full"?markdown(getQ(q)):examHTML(e))+'</div></section></div>';app.querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>{state.q=+b.dataset.q;render()});app.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{state.mode=b.dataset.mode;render()});$("#done").onchange=ev=>{let x=loadProgress();x.done=ev.target.checked?[...new Set([...x.done,q])]:x.done.filter(v=>v!==q);saveProgress(x)};renderMath($("#lesson"));}
 function examHTML(e){

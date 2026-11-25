@@ -31,6 +31,7 @@
 - `04_dynamic_games/` — 역진귀납법과 순차적 균형
 - `05_industrial_applications/` — 구매입찰 및 공급사 협상
 - `templates/` — 개념별 정리 템플릿
+- `EXAM_METHOD/` — 영문 문제 판독, 수식 도출 흐름, HW3 문제별 풀이 지도, 시험용 요약 풀이
 
 ## 중요한 구분
 
@@ -47,4 +48,12 @@
 - [x] 베이지안 게임 입문
 - [x] 역진귀납법 입문
 - [x] 구매입찰·공급사 협상 적용 프레임
-- [ ] 강의 과제(HW3) 원문 기반 문제별 해설 — 원문을 확인한 뒤 문제 순서와 표기법을 유지해 추가
+- [x] HW3 문제별 풀이 지도 및 시험용 요약 풀이 구조
+
+## 시험 대비 시작 순서
+
+1. `EXAM_METHOD/01_read_to_equation_workflow.md` — 영문 문장 → 수학적 작업 판별
+2. `EXAM_METHOD/02_HW3_problem_map.md` — HW3 각 문제의 풀이 순서와 식 도출
+3. `EXAM_METHOD/03_exam_quick_sheets.md` — 시험장에서 재현할 압축 풀이
+
+시험 대비 자료는 내화물·구매 사례를 배제하고 과제의 게임이론 개념과 문제 구조에 집중합니다. Full Solution의 논리를 먼저 이해한 뒤 Exam Solution을 시간 제한 아래 반복하는 방식으로 사용합니다.

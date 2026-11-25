@@ -52,7 +52,7 @@ function normalizeMathMarkdown(source){
   const chunks=String(source||"").split(/(\`\`\`[\s\S]*?\`\`\`)/g);
   return chunks.map((chunk,i)=>{
     if(i%2===1) return chunk;
-    let out=chunk.replace(/^\[\s*$/gm,"\\\\[").replace(/^\]\s*$/gm,"\\\\]");
+    let out=chunk.replace(/^\[\s*$/gm,"\\[").replace(/^\]\s*$/gm,"\\]");
     out=out.replace(/(?<!\\)qquad/g,"\\qquad");
     // Preserve prose parentheses. Only wrap parenthetical content that has
     // unmistakable mathematical notation and is not already delimited.

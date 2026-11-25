@@ -34,15 +34,13 @@
 
 **읽자마자 할 일:** 미분하지 않는다. 게임의 Bayesian normal form을 먼저 구성한다.
 
-```text
-Who moves? → Firm 1, Firm 2
-What can they choose? → investment levels
-Who knows the cost type? → Firm 2 knows own type
-Who is uncertain? → Firm 1
-What are possible types? → Firm 2: low / high cost
-          ↓
-Write A₁, A₂, T₁, T₂, beliefs, payoffs
-```
+<div class="workflow"><div class="workflow-step"><strong>Who moves?</strong><span>Firm 1, Firm 2</span></div>
+<div class="workflow-step"><strong>What can they choose?</strong><span>investment levels</span></div>
+<div class="workflow-step"><strong>Who knows the cost type?</strong><span>Firm 2 knows own type</span></div>
+<div class="workflow-step"><strong>Who is uncertain?</strong><span>Firm 1</span></div>
+<div class="workflow-step"><strong>What are possible types?</strong><span>Firm 2: low / high cost</span></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><span>Write A₁, A₂, T₁, T₂, beliefs, payoffs</span></div></div>
 
 원문 해설의 설정:
 - (A_1=A_2=[0,\infty))
@@ -126,16 +124,14 @@ i_1^*(p)=\frac{10(1-p)}{3-p}.
 
 **읽기 트리거:** simultaneously / asymmetric information / Partner 1 knows / Partner 2 does not
 
-```text
-Partner 1 observes type → type-specific payoff maximization
-Partner 2 does not observe type → expected payoff maximization
-                         ↓
-Both choose investments simultaneously
-                         ↓
-Type-specific BR₁ + expected BR₂
-                         ↓
-Solve together; check nonnegative action constraint
-```
+<div class="workflow"><div class="workflow-step"><strong>Partner 1 observes type</strong><span>type-specific payoff maximization</span></div>
+<div class="workflow-step"><strong>Partner 2 does not observe type</strong><span>expected payoff maximization</span></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><span>Both choose investments simultaneously</span></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><span>Type-specific BR₁ + expected BR₂</span></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><span>Solve together; check nonnegative action constraint</span></div></div>
 
 풀이 순서:
 1. Normal form: 행동집합, 유형집합, belief, payoff를 정의한다.
@@ -210,21 +206,19 @@ EU(Pay)=3,qquad EU(Free\text{-}ride)=4s.
 
 **읽자마자:** 게임 트리에서 Sender의 유형, 메시지, Receiver의 행동, 말단 보수를 분리한다.
 
-```text
-1. Receiver's optimal action after each message
-                 ↓
-2. Candidate pooling / separating Sender strategy
-                 ↓
-3. Bayes-consistent on-path belief
-                 ↓
-4. Off-path belief where needed
-                 ↓
-5. Sender: equilibrium message vs deviation payoff
-                 ↓
-6. Receiver sequential rationality + Sender no deviation
-                 ↓
-PBE candidate survives or is rejected
-```
+<div class="workflow"><div class="workflow-step"><strong>1. Receiver's optimal action after each message</strong></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><strong>2. Candidate pooling / separating Sender strategy</strong></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><strong>3. Bayes-consistent on-path belief</strong></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><strong>4. Off-path belief where needed</strong></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><strong>5. Sender: equilibrium message vs deviation payoff</strong></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><strong>6. Receiver sequential rationality + Sender no deviation</strong></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><span>PBE candidate survives or is rejected</span></div></div>
 
 ### Q4(a) Find pure pooling and separating PBE
 
@@ -265,19 +259,17 @@ PBE candidate survives or is rejected
 
 **영문 트리거:** sequential move / observes bid / responds / risk-neutral
 
-```text
-Bidder 1 submits b₁
-        ↓ observed by Bidder 2
-Bidder 2: buy/win or step out? → backward induction first
-        ↓
-Find Bidder 2's threshold response
-        ↓
-Bidder 1 anticipates the threshold
-        ↓
-Expected payoff of Bidder 1
-        ↓
-FOC + SOC → optimal b₁
-```
+<div class="workflow"><div class="workflow-step"><span>Bidder 1 submits b₁</span></div>
+<div class="workflow-step"><span>↓ observed by Bidder 2</span></div>
+<div class="workflow-step"><strong>Bidder 2: buy/win or step out?</strong><span>backward induction first</span></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><span>Find Bidder 2's threshold response</span></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><span>Bidder 1 anticipates the threshold</span></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><span>Expected payoff of Bidder 1</span></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><strong>FOC + SOC</strong><span>optimal b₁</span></div></div>
 
 Bidder 2는 Bidder 1의 입찰을 관찰한 후 행동하므로 후발자부터 푼다. Bidder 1의 문제에서는 Bidder 2가 물러날 확률 또는 조건을 반영해 기대 payoff를 만든다.
 
@@ -319,22 +311,20 @@ U_A(w,e)\ge\bar U.
 
 **영문 트리거:** cannot observe effort / induce effort / loss due to asymmetric information
 
-```text
-Choose target effort e*
-        ↓
-Define wages by observable outcome: wL, wH
-        ↓
-IR: agent accepts contract
-IC: agent prefers target effort to alternatives
-        ↓
-Identify binding constraints
-        ↓
-Solve wage pair
-        ↓
-Expected wage → Principal profit
-        ↓
-Compare with symmetric-information profit
-```
+<div class="workflow"><div class="workflow-step"><span>Choose target effort e*</span></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><span>Define wages by observable outcome: wL, wH</span></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><span>IR: agent accepts contract</span></div>
+<div class="workflow-step"><span>IC: agent prefers target effort to alternatives</span></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><span>Identify binding constraints</span></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><span>Solve wage pair</span></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><strong>Expected wage</strong><span>Principal profit</span></div>
+<div class="workflow-arrow">↓</div>
+<div class="workflow-step"><span>Compare with symmetric-information profit</span></div></div>
 
 - IR(Individual Rationality): 계약 수락 유인
 - IC(Incentive Compatibility): 목표 노력을 선택할 유인

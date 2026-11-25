@@ -12,6 +12,16 @@ header{background:var(--card);border-bottom:1px solid var(--bd);padding:14px 22p
 aside{position:sticky;top:82px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px}aside button{width:100%;text-align:left;border:0;background:transparent;padding:9px;border-radius:7px;color:var(--fg)}aside button.active{background:var(--soft);color:var(--pri);font-weight:700}
 .panel,.doc{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:20px 24px;min-width:0}.doc h1{font-size:23px}.doc h2{font-size:19px;border-bottom:1px solid var(--bd);padding-bottom:5px;margin-top:1.8em}.doc h3{font-size:16px;margin-top:1.5em}.doc table{border-collapse:collapse;display:block;overflow-x:auto}.doc th,.doc td{border:1px solid var(--bd);padding:7px 10px;vertical-align:top}.doc th{background:#f0f2f5}.doc blockquote{margin:12px 0;padding:10px 14px;background:#f2f4f7;border-left:4px solid var(--pri)}.doc code{background:#f1f3f6;padding:2px 4px;border-radius:4px}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.muted,.hint{color:var(--mut);font-size:13px}.tag{display:inline-block;background:var(--soft);color:var(--pri);padding:3px 9px;border-radius:30px;font-size:12px}.mode{display:flex;gap:8px;margin:14px 0}.mode button.active{background:var(--pri);color:white}.math{overflow-x:auto}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.stat{padding:15px;border:1px solid var(--bd);border-radius:10px;background:var(--card)}.stat b{font-size:25px;display:block}.opt{display:block;width:100%;text-align:left;padding:11px 13px;border:1px solid var(--bd);border-radius:9px;background:white;margin:8px 0}.opt.correct{background:var(--ok);border-color:#4b9b68}.opt.wrong{background:#fff0f0;border-color:#c85b5b}.feedback{padding:12px;border-radius:9px;margin:12px 0;background:var(--soft)}textarea{width:100%;min-height:125px;border:1px solid var(--bd);border-radius:8px;padding:12px;font:inherit}.progress{height:9px;background:#e9edf2;border-radius:9px;overflow:hidden}.progress i{display:block;height:100%;background:var(--pri)}.qtitle{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.timer{font:700 23px ui-monospace,monospace}.check{display:block;margin:8px 0}.check input{margin-right:7px}.warning{background:var(--warn);padding:12px;border-radius:8px}.hide{display:none}
+
+/* Reliable math layout: display equations stay readable on narrow screens. */
+.formula-panel{display:grid;gap:10px;background:#f7f9fc;border:1px solid var(--bd);border-radius:10px;padding:14px;overflow-x:auto}
+.formula-line{min-height:34px;padding:5px 2px;overflow-x:auto}
+.formula-line .katex-display{margin:.35em 0;text-align:left}
+.formula-caption,.equation-caption{color:var(--mut);font-size:14px;padding:5px 2px}
+.doc .katex-display{max-width:100%;overflow-x:auto;overflow-y:hidden;padding:5px 0}
+.doc .katex{font-size:1.06em}
+.doc p:has(>.katex-display){overflow-x:auto}
+@media(max-width:600px){.panel,.doc{padding:15px}.formula-panel{padding:10px}.doc .katex{font-size:1em}}
 </style></head>
 <body>
 <header><h1>IMEN582 · Game Theory Exam Lab</h1><nav>

@@ -46,17 +46,23 @@ function getQ(n){
   return lines.slice(start,end<0?lines.length:end).join("\n");
 }
 function normalizeMathMarkdown(source){
-  // Convert legacy standalone square-bracket equation blocks into valid LaTeX.
-  const chunks=(source||"").split(/(\`\`\`[\s\S]*?\`\`\`)/g);
+  // Protect fenced code, then convert the repository's legacy [ ... ] display
+  // math blocks into KaTeX auto-render delimiters. A single "$" here would
+  // incorrectly create inline math and break multiline equations.
+  const chunks=String(source||"").split(/(\`\`\`[\s\S]*?\`\`\`)/g);
   return chunks.map((chunk,i)=>{
-    if(i%2===1) return chunk; // preserve fenced code exactly
-    let out=chunk.replace(/^\[\s*$/gm,"$").replace(/^\]\s*$/gm,"$");
+    if(i%2===1) return chunk;
+    let out=chunk.replace(/^\[\s*$/gm,"\\\\[").replace(/^\]\s*$/gm,"\\\\]");
     out=out.replace(/(?<!\\)qquad/g,"\\qquad");
-    // Convert mathematical expressions in parentheses, but leave prose intact.
-    out=out.replace(/\(([^()\n]{1,140})\)/g,(whole,inside)=>{
+    // Preserve prose parentheses. Only wrap parenthetical content that has
+    // unmistakable mathematical notation and is not already delimited.
+    out=out.replace(/\(([^()\n]{1,140})\)/g,(whole,inside,offset,text)=>{
+      const before=text.slice(Math.max(0,offset-2),offset);
+      const after=text.slice(offset+whole.length,offset+whole.length+2);
+      if(before.includes("\\") || after.includes("\\")) return whole;
       const t=inside.trim();
-      const looksMath=/\\|[_^=<>≤≥∑παβγ]|^[a-zA-Z]$/.test(t);
-      return looksMath ? "$"+t+"$" : whole;
+      const looksMath=/\\[a-zA-Z]+|[_^=<>≤≥∑παβγ]|^[a-zA-Z]\s*=\s*[-\d]/.test(t);
+      return looksMath ? "\\("+t+"\\)" : whole;
     });
     return out;
   }).join("");

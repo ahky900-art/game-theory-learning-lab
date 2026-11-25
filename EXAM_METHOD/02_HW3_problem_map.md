@@ -61,22 +61,13 @@ Payoff는 문제에 주어진 유형별 cost를 반영해 작성한다. 이 문�
 
 **왜 Firm 2부터인가?** Firm 2는 자기 cost type을 관찰한다. 따라서 low/high type 각각의 payoff를 따로 최대화한다. Firm 1은 Firm 2의 실제 유형을 모르므로 기대 payoff를 최대화한다.
 
-```text
-Step 1: Firm 2 knows c₂
-        ↓
-FOC for low type → i₂L(i₁)
-FOC for high type → i₂H(i₁)
-        ↓
-Step 2: Firm 1 does not know c₂
-        ↓
-Expected payoff = p·π₁(low) + (1-p)·π₁(high)
-        ↓
-FOC₁ = 0 → i₁(i₂L,i₂H,p)
-        ↓
-Step 3: Substitute Firm 2's type-specific BRs
-        ↓
-Solve simultaneously → BNE
-```
+<div class="workflow">
+  <div class="workflow-step"><strong>Step 1 · Firm 2 observes its own cost type</strong><span>Low-cost type: derive the best response i₂ᴸ(i₁)</span><span>High-cost type: derive the best response i₂ᴴ(i₁)</span></div>
+  <div class="workflow-arrow">↓</div>
+  <div class="workflow-step"><strong>Step 2 · Firm 1 does not observe Firm 2's type</strong><span>Write expected payoff: p·π₁(low) + (1−p)·π₁(high)</span><span>Differentiate with respect to i₁ and set FOC₁ = 0</span></div>
+  <div class="workflow-arrow">↓</div>
+  <div class="workflow-step"><strong>Step 3 · Solve the best-response conditions jointly</strong><span>Substitute Firm 2's type-specific best responses into Firm 1's FOC</span><span>Solve for i₁*, i₂ᴸ*, and i₂ᴴ* → Bayesian Nash equilibrium</span></div>
+</div>
 
 Firm 2의 유형별 해설 식:
 [

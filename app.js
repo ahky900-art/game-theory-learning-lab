@@ -21,27 +21,42 @@ const phraseItems=[
 ["Is the allocation efficient?","Check whether the good goes to the highest-valuation bidder; distinguish total surplus from transfers.","Maximize total surplus; compare allocation rule","개별 보수나 판매자 수입의 변화만으로 효율성을 판단하지 않는다."]
 ];
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-function renderMath(root=document.body){if(window.renderMathInElement)renderMathInElement(root,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false},{left:"\\(",right:"\\)",display:false},{left:"\\[",right:"\\]",display:true}],throwOnError:false});}
+function renderMath(root=document.body){
+  if(!root || !window.renderMathInElement) return;
+  renderMathInElement(root,{
+    delimiters:[
+      {left:"$$",right:"$$",display:true},
+      {left:"\\[",right:"\\]",display:true},
+      {left:"\\(",right:"\\)",display:false},
+      {left:"$",right:"$",display:false}
+    ],
+    throwOnError:false,
+    strict:"warn",
+    ignoredTags:["script","noscript","style","textarea","pre","code"]
+  });
+}
 function loadProgress(){try{return JSON.parse(localStorage.getItem("gtlab-progress")||'{"done":[],"phraseCorrect":0,"phraseTotal":0,"blind":{}}')}catch{return {done:[],phraseCorrect:0,phraseTotal:0,blind:{}}}}
 function saveProgress(p){localStorage.setItem("gtlab-progress",JSON.stringify(p))}
 let fullText="",quickText="";
 async function loadDocs(){const [a,b]=await Promise.all([fetch("EXAM_METHOD/02_HW3_problem_map.md"),fetch("EXAM_METHOD/03_exam_quick_sheets.md")]);if(!a.ok||!b.ok)throw Error("학습 문서를 불러오지 못했습니다.");fullText=await a.text();quickText=await b.text();}
-function getQ(n){const lines=fullText.split("\n"),start=lines.findIndex(x=>new RegExp("^## Q"+n+"\\b").test(x));if(start<0)return "해당 문제의 원문을 찾지 못했습니다.";let end=lines.findIndex((x,i)=>i>start&&/^## Q[1-8]\b/.test(x));return lines.slice(start,end<0?lines.length:end).join("\n");}
+function getQ(n){
+  const lines=fullText.split("\n"),start=lines.findIndex(x=>new RegExp("^## Q"+n+"\\b").test(x));
+  if(start<0)return "해당 문제의 원문을 찾지 못했습니다.";
+  let end=lines.findIndex((x,i)=>i>start&&/^## Q[1-8]\b/.test(x));
+  return lines.slice(start,end<0?lines.length:end).join("\n");
+}
 function normalizeMathMarkdown(source){
-  // Convert the repository's legacy standalone [ ... ] equation blocks to
-  // standard LaTeX display delimiters, without touching fenced code examples.
-  const chunks=(source||"").split(/(```[\\s\\S]*?```)/g);
+  // Convert legacy standalone square-bracket equation blocks into valid LaTeX.
+  const chunks=(source||"").split(/(\`\`\`[\s\S]*?\`\`\`)/g);
   return chunks.map((chunk,i)=>{
-    if(i%2===1) return chunk;
-    let out=chunk.replace(/^\\[\\s*$/gm,"\\\\[").replace(/^\\]\\s*$/gm,"\\\\]");
-    // Repair the one common missing command slash in the supplied notes.
-    out=out.replace(/(?<!\\\\)qquad/g,"\\\\qquad");
-    // Parenthesized mathematical expressions in the source notes, e.g. (i_1),
-    // (R'(n)=c_i), (p), become inline math. Ordinary prose parentheses remain.
-    out=out.replace(/\\(([^()\\n]{1,140})\\)/g,(whole,inside)=>{
+    if(i%2===1) return chunk; // preserve fenced code exactly
+    let out=chunk.replace(/^\[\s*$/gm,"\\[").replace(/^\]\s*$/gm,"\\]");
+    out=out.replace(/(?<!\\)qquad/g,"\\qquad");
+    // Convert mathematical expressions in parentheses, but leave prose intact.
+    out=out.replace(/\(([^()\n]{1,140})\)/g,(whole,inside)=>{
       const t=inside.trim();
-      const looksMath=/\\\\|[_^=<>≤≥∑παβγ]|^[a-zA-Z]$/.test(t);
-      return looksMath ? "\\\\("+t+"\\\\)" : whole;
+      const looksMath=/\\|[_^=<>≤≥∑παβγ]|^[a-zA-Z]$/.test(t);
+      return looksMath ? "\\("+t+"\\)" : whole;
     });
     return out;
   }).join("");
@@ -50,13 +65,23 @@ function markdown(s){return marked.parse(normalizeMathMarkdown(s||""));}
 function nav(){document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===state.tab));}
 function renderLearn(){const p=loadProgress(),q=state.q,e=exam[q];app.innerHTML='<div class="grid"><aside><div class="muted">HOMEWORK 3 · 문제 선택</div>'+Array.from({length:8},(_,i)=>'<button data-q="'+(i+1)+'" class="'+(q===i+1?'active':'')+'">Q'+(i+1)+' · '+esc(exam[i+1].type.split(" · ")[0])+'</button>').join("")+'<hr><label class="check"><input id="done" type="checkbox" '+(p.done.includes(q)?'checked':'')+'> 이 문제 학습 완료</label></aside><section class="panel"><div class="qtitle"><div><span class="tag">Q'+q+'</span> <span class="muted">'+esc(e.type)+'</span></div><div class="mode"><button class="btn '+(state.mode==="full"?"active":"")+'" data-mode="full">Full Solution</button><button class="btn '+(state.mode==="exam"?"active":"")+'" data-mode="exam">Exam Solution</button></div></div><div class="warning">학습 순서: 영문 조건 판독 → 풀이 구조 결정 → 수식 도출 → 검산. Exam Solution은 최종 암기용이 아니라 Full Solution을 이해한 뒤 재현하는 용도입니다.</div><div class="doc" id="lesson">'+(state.mode==="full"?markdown(getQ(q)):examHTML(e))+'</div></section></div>';app.querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>{state.q=+b.dataset.q;render()});app.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{state.mode=b.dataset.mode;render()});$("#done").onchange=ev=>{let x=loadProgress();x.done=ev.target.checked?[...new Set([...x.done,q])]:x.done.filter(v=>v!==q);saveProgress(x)};renderMath($("#lesson"));}
 function examHTML(e){
-  const formulaLines=e.equations.split("\\n").map(line=>{
-    const clean=esc(line).replace(/∂/g,"\\\\partial ").replace(/≥/g,"\\\\ge ").replace(/≤/g,"\\\\le ").replace(/Σ/g,"\\\\sum ").replace(/π/g,"\\\\pi ").replace(/→/g,"\\\\Rightarrow ").replace(/×/g,"\\\\times ").replace(/−/g,"-").replace(/₁/g,"_1").replace(/₂/g,"_2").replace(/ᴸ/g,"^L").replace(/ᴴ/g,"^H").replace(/⁎|\*/g,"^*");
-    return '<div class="formula-line">\\\\('+clean+'\\\\)</div>';
+  const formulaLines=e.equations.split("\n").map(line=>{
+    const raw=line.trim();
+    const looksMath=/[=<>∂πΣ≥≤→]|FOC|BNE|IR:|IC:|EU|P\(|R'|i[₁₂]/.test(raw);
+    if(!looksMath) return '<div class="equation-caption">'+esc(raw)+'</div>';
+    const latex=esc(raw)
+      .replace(/FOC₁/g,"\\mathrm{FOC}_1").replace(/FOC₂/g,"\\mathrm{FOC}_2")
+      .replace(/BNE/g,"\\mathrm{BNE}").replace(/IR/g,"\\mathrm{IR}").replace(/IC/g,"\\mathrm{IC}")
+      .replace(/∂/g,"\\partial ").replace(/π/g,"\\pi ").replace(/Σ/g,"\\sum ")
+      .replace(/≥/g,"\\ge ").replace(/≤/g,"\\le ").replace(/→/g,"\\Rightarrow ")
+      .replace(/×/g,"\\times ").replace(/−/g,"-")
+      .replace(/₁/g,"_1").replace(/₂/g,"_2").replace(/ᴸ/g,"^L").replace(/ᴴ/g,"^H")
+      .replace(/⁎|\\*/g,"^*");
+    return '<div class="formula-line">\\['+latex+'\\]</div>';
   }).join("");
   return '<h2>시험장에서 재현할 순서</h2><ol>'+e.steps.map(s=>'<li>'+esc(s)+'</li>').join("")+'</ol><h2>핵심 수식 / 조건</h2><div class="formula-panel">'+formulaLines+'</div><h2>검산 포인트</h2><blockquote>'+esc(e.check)+'</blockquote><p class="muted">목표: 문제 판독과 식 도출 1분, 핵심 전개 3분, 답·조건 검산 1분. 실제 배점과 난도에 따라 조정하세요.</p>';
 }
-function renderPhrase(){const item=phraseItems[state.phrase%phraseItems.length];app.innerHTML='<section class="panel"><div class="qtitle"><div><span class="tag">영문 → 수학 작업</span> <span class="muted">카드 '+(state.phrase+1)+' / '+phraseItems.length+'</span></div><button class="btn" id="next">다음 문장 →</button></div><h2>'+esc(item[0])+'</h2><p>이 문장을 읽으면 가장 먼저 어떤 수학 작업을 해야 할까요?</p><div id="opts">'+[item[2], "Set all players' payoffs equal to each other.","Differentiate every payoff with respect to every variable.","Choose the action with the largest numerical label."].sort(()=>Math.random()-.5).map(x=>'<button class="opt" data-answer="'+esc(x)+'">'+esc(x)+'</button>').join("")+'</div><div id="fb"></div><p class="muted">해설: '+esc(item[1])+'</p></section>';app.querySelectorAll("[data-answer]").forEach(b=>b.onclick=()=>{if($("#fb").dataset.done)return;let ok=b.dataset.answer===item[2];$("#fb").dataset.done="1";b.classList.add(ok?"correct":"wrong");$("#fb").innerHTML='<div class="feedback"><b>'+(ok?"정답입니다.":"다시 확인하세요.")+'</b><br>'+esc(item[3])+'<br><b>정답:</b> '+esc(item[2])+'</div>';renderMath($("#fb"));let p=loadProgress();p.phraseTotal++;if(ok)p.phraseCorrect++;saveProgress(p)});$("#next").onclick=()=>{state.phrase=(state.phrase+1)%phraseItems.length;render()};}
+function renderPhrase(){const item=phraseItems[state.phrase%phraseItems.length];app.innerHTML='<section class="panel"><div class="qtitle"><div><span class="tag">영문 → 수학 작업</span> <span class="muted">카드 '+(state.phrase+1)+' / '+phraseItems.length+'</span></div><button class="btn" id="next">다음 문장 →</button></div><h2>'+esc(item[0])+'</h2><p>이 문장을 읽으면 가장 먼저 어떤 수학 작업을 해야 할까요?</p><div id="opts">'+[item[2], "Set all players' payoffs equal to each other.","Differentiate every payoff with respect to every variable.","Choose the action with the largest numerical label."].sort(()=>Math.random()-.5).map(x=>'<button class="opt" data-answer="'+esc(x)+'">'+esc(x)+'</button>').join("")+'</div><div id="fb"></div><p class="muted">해설: '+esc(item[1])+'</p></section>';app.querySelectorAll("[data-answer]").forEach(b=>b.onclick=()=>{if($("#fb").dataset.done)return;let ok=b.dataset.answer===item[2];$("#fb").dataset.done="1";b.classList.add(ok?"correct":"wrong");$("#fb").innerHTML='<div class="feedback"><b>'+(ok?"정답입니다.":"다시 확인하세요.")+'</b><br>'+esc(item[3])+'<br><b>정답:</b> '+esc(item[2])+'</div>';renderMath($("#fb"));let p=loadProgress();p.phraseTotal++;if(ok)p.phraseCorrect++;renderMath($("#fb"));saveProgress(p)});$("#next").onclick=()=>{state.phrase=(state.phrase+1)%phraseItems.length;render()};}
 function renderBlind(){const p=loadProgress(),saved=p.blind[state.q]||"";app.innerHTML='<section class="panel"><div class="qtitle"><div><span class="tag">3-minute blind solve</span> <b>Q'+state.q+'</b></div><div class="row"><span class="timer" id="timer">03:00</span><button class="btn" id="start">3분 시작</button><button class="btn" id="reset">초기화</button></div></div><div class="row">'+Array.from({length:8},(_,i)=>'<button class="btn '+(state.q===i+1?'primary':'')+'" data-bq="'+(i+1)+'">Q'+(i+1)+'</button>').join("")+'</div><h3>1. 문제 유형과 정보구조를 먼저 적으세요.</h3><p>'+esc(exam[state.q].type)+'</p><textarea id="blindAnswer" placeholder="예: type을 아는 Player와 모르는 Player를 분리하고...">'+esc(saved)+'</textarea><div class="row"><button class="btn" id="save">풀이 저장</button><button class="btn primary" id="reveal">'+(state.blindReveal?"해설 숨기기":"해설 보기")+'</button></div><div id="solution" class="'+(state.blindReveal?"":"hide")+' doc">'+markdown(getQ(state.q))+'</div></section>';app.querySelectorAll("[data-bq]").forEach(b=>b.onclick=()=>{state.q=+b.dataset.bq;state.blindReveal=false;render()});$("#save").onclick=()=>{let x=loadProgress();x.blind[state.q]=$("#blindAnswer").value;saveProgress(x);$("#save").textContent="저장됨"};$("#reveal").onclick=()=>{state.blindReveal=!state.blindReveal;render()};$("#reset").onclick=()=>{clearInterval(state.interval);state.timer=180;$("#timer").textContent="03:00"};$("#start").onclick=()=>{clearInterval(state.interval);state.timer=180;state.interval=setInterval(()=>{state.timer--;$("#timer").textContent=String(Math.floor(state.timer/60)).padStart(2,"0")+":"+String(state.timer%60).padStart(2,"0");if(state.timer<=0)clearInterval(state.interval)},1000)};renderMath($("#solution"));}
 function renderDashboard(){const p=loadProgress(),done=p.done.length,accuracy=p.phraseTotal?Math.round(100*p.phraseCorrect/p.phraseTotal):0;app.innerHTML='<section class="panel"><h2>시험 대비 현황</h2><div class="cards"><div class="stat"><span class="muted">문제별 학습 완료</span><b>'+done+'/8</b><div class="progress"><i style="width:'+(done/8*100)+'%"></i></div></div><div class="stat"><span class="muted">영문 판독 정답률</span><b>'+accuracy+'%</b><span class="muted">'+p.phraseCorrect+' / '+p.phraseTotal+'문항</span></div><div class="stat"><span class="muted">블라인드 풀이 기록</span><b>'+Object.keys(p.blind).length+'/8</b></div><div class="stat"><span class="muted">시험 조건</span><b>90분</b><span class="muted">5문제 · 소문항 약 15개</span></div></div><h3>학습 우선순위</h3><ol><li>Full Solution으로 풀이 논리 이해</li><li>Exam Solution으로 3분 내 식과 순서 재현</li><li>영문 판독 훈련에서 문장 → 수학 작업을 즉시 연결</li><li>블라인드 풀이에서 해설 없이 작성하고 마지막에 검산</li></ol><p class="muted">학습 기록은 현재 브라우저의 localStorage에만 저장됩니다. 다른 기기나 브라우저와 자동 동기화되지 않습니다.</p><button class="btn" id="export">학습 기록 내보내기</button> <button class="btn" id="clear">기록 초기화</button></section>';$("#export").onclick=()=>{const blob=new Blob([JSON.stringify(p,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="game-theory-progress.json";a.click();URL.revokeObjectURL(a.href)};$("#clear").onclick=()=>{if(confirm("현재 브라우저의 학습 기록을 모두 초기화할까요?")){localStorage.removeItem("gtlab-progress");render()}}}
 function render(){nav();if(state.tab==="learn")renderLearn();if(state.tab==="phrase")renderPhrase();if(state.tab==="blind")renderBlind();if(state.tab==="dashboard")renderDashboard();}

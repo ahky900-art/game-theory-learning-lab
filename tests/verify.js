@@ -1,0 +1,1 @@
+const assert=require("node:assert/strict");const q=require("../quiz-core.js");const items=q.getItems();assert.equal(items.length,6);items.forEach((x,i)=>assert.equal(q.evaluate(i,x.equation),true));assert.equal(q.evaluate(0,"wrong"),false);console.log("Game Theory Exam Lab checks passed.");

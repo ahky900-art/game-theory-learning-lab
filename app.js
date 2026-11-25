@@ -50,13 +50,13 @@ function normalizeMathMarkdown(source){
   const chunks=(source||"").split(/(\`\`\`[\s\S]*?\`\`\`)/g);
   return chunks.map((chunk,i)=>{
     if(i%2===1) return chunk; // preserve fenced code exactly
-    let out=chunk.replace(/^\[\s*$/gm,"\\[").replace(/^\]\s*$/gm,"\\]");
+    let out=chunk.replace(/^\[\s*$/gm,"$").replace(/^\]\s*$/gm,"$");
     out=out.replace(/(?<!\\)qquad/g,"\\qquad");
     // Convert mathematical expressions in parentheses, but leave prose intact.
     out=out.replace(/\(([^()\n]{1,140})\)/g,(whole,inside)=>{
       const t=inside.trim();
       const looksMath=/\\|[_^=<>≤≥∑παβγ]|^[a-zA-Z]$/.test(t);
-      return looksMath ? "\\("+t+"\\)" : whole;
+      return looksMath ? "$"+t+"$" : whole;
     });
     return out;
   }).join("");

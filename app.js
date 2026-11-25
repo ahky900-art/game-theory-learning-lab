@@ -76,7 +76,7 @@ function examHTML(e){
       .replace(/≥/g,"\\ge ").replace(/≤/g,"\\le ").replace(/→/g,"\\Rightarrow ")
       .replace(/×/g,"\\times ").replace(/−/g,"-")
       .replace(/₁/g,"_1").replace(/₂/g,"_2").replace(/ᴸ/g,"^L").replace(/ᴴ/g,"^H")
-      .replace(/⁎|\\*/g,"^*");
+      .replace(/[⁎*]/g,"^*");
     return '<div class="formula-line">\\['+latex+'\\]</div>';
   }).join("");
   return '<h2>시험장에서 재현할 순서</h2><ol>'+e.steps.map(s=>'<li>'+esc(s)+'</li>').join("")+'</ol><h2>핵심 수식 / 조건</h2><div class="formula-panel">'+formulaLines+'</div><h2>검산 포인트</h2><blockquote>'+esc(e.check)+'</blockquote><p class="muted">목표: 문제 판독과 식 도출 1분, 핵심 전개 3분, 답·조건 검산 1분. 실제 배점과 난도에 따라 조정하세요.</p>';

@@ -54,13 +54,63 @@ window.MathJax = {tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],pr
 <div class="explain good"><b>LP(Linear Programming):</b> 결정변수에 대한 목적함수와 제약식이 모두 선형인 최적화입니다. 공격자 후보를 고정하면 기대효용이 방어전략 확률의 선형결합이므로 LP로 표현할 수 있습니다.</div></div>
 
 <div class="card"><h3>Step 4. δ-coarsening으로 그래프를 동네로 축소 (Section 4.1)</h3>
-<div class="formula">δ-valuable node ⇔ Rᵃ(v)&gt;δ<br>v∼δv′ ⇔ Rᵃ(v′)&gt;δ and d(v,v′)≤B<br>≈δ = ∼δ의 reflexive, symmetric, transitive closure<br>V̂=V/≈δ</div>
-<div class="step"><span class="num">4-1</span><span>δ를 정하고 공격 보상이 δ보다 큰 노드만 핵심 표적으로 남깁니다.</span></div>
-<div class="step"><span class="num">4-2</span><span>핵심 표적까지 배터리 B 이내로 갈 수 있는 노드들은 같은 동네에 묶어야 합니다. 그래야 드론이 동네 경계를 넘나드는 전략을 제한할 근거가 생깁니다.</span></div>
-<div class="step"><span class="num">4-3</span><span>관계 ∼δ를 동치관계가 되도록 닫아 동네들의 분할 V̂를 구성합니다.</span></div>
-<div class="step"><span class="num">4-4</span><span>동네별 상위 P개 공격 보상 합을 비교해 매력도가 낮은 동네를 제거하고, 동네 수·payload·battery·방어효과 조건을 검사합니다.</span></div>
-<div class="formula">T[v̂]=Σ_(v∈top(P,by=Rᵃ))Rᵃ(v)<br>Algorithm 2 checks:<br>|V̂|≥4max{A,D}; valuable nodes per neighborhood ≤P;<br>best-path(v̂,δ)≤B; defender presence must materially affect utilities.</div>
-<div class="explain warn">δ가 커지면 무시하는 저보상 표적이 늘어 계산량은 감소하지만 근사오차는 커질 수 있습니다. 논문은 조건을 만족하는 가장 작은 δ를 이진탐색합니다. δ-coarsening을 찾지 못하면 weighted K-Means로 넘어가지만, 그 경우 Section 5의 이론 보장은 적용된다고 단정할 수 없습니다.</div></div>
+<p><b>이 Step의 목적:</b> 도시 전체의 수많은 노드를 모두 개별 표적으로 계산하지 않고, 공격자에게 의미 있는 고보상 노드들을 중심으로 묶어 계산 단위를 '동네(neighborhood)'로 줄이는 것입니다. 여기서 δ는 동네의 크기 자체가 아니라, 어떤 노드를 중요 표적으로 볼지 정하는 보상 기준값입니다.</p>
+<h4>수식 4-1. δ-valuable node 정의</h4>
+<div class="formula">\[\text{\(\delta\)-valuable}(v)\iff R^a(v)>\delta\]</div>
+<table><tr><th>항(term)</th><th>뜻</th><th>왜 필요한가?</th></tr>
+<tr><td>\(v\)</td><td>도시 그래프의 특정 노드(공격 가능한 위치)</td><td>평가 대상 위치를 지정</td></tr>
+<tr><td>\(R^a\)</td><td>attacker reward, 공격자 보상 함수</td><td>그 위치를 공격했을 때 공격자가 얻는 가치</td></tr>
+<tr><td>\(R^a(v)\)</td><td>노드 \(v\)의 공격자 보상값</td><td>위치별 공격 매력도를 수치화</td></tr>
+<tr><td>\(\delta\)</td><td>보상 임계값(scale parameter)</td><td>이 값보다 큰 보상만 우선적으로 중요한 표적으로 취급</td></tr>
+<tr><td>\(>\)</td><td>엄격한 초과</td><td>보상이 임계값과 같은 노드는 valuable로 분류하지 않음</td></tr>
+<tr><td>\(\iff\)</td><td>if and only if, 필요충분조건</td><td>노드가 δ-valuable인 것과 \(R^a(v)>\delta\)가 동치</td></tr></table>
+<div class="step"><span class="num">4-1 매칭</span><span>“δ를 정하고 공격 보상이 δ보다 큰 노드만 핵심 표적으로 남긴다”는 설명이 바로 이 정의입니다. δ를 높이면 valuable 노드 수가 줄어 계산량은 줄지만, 무시되는 보상이 늘어 근사오차가 커질 수 있습니다.</span></div>
+
+<h4>수식 4-2. 가치 있는 노드와 배터리 거리 관계</h4>
+<div class="formula">\[v\sim_\delta v' \iff R^a(v')>\delta \;\land\; d(v,v')\leq B\]</div>
+<table><tr><th>항(term)</th><th>뜻</th><th>수식에서 하는 일</th></tr>
+<tr><td>\(v\)</td><td>출발 후보 노드</td><td>가치 있는 표적 자체일 필요는 없음</td></tr>
+<tr><td>\(v'\)</td><td>도달하려는 노드</td><td>보상 기준을 넘는 δ-valuable 노드</td></tr>
+<tr><td>\(\sim_\delta\)</td><td>δ에 의해 정의된 이항관계</td><td>어떤 노드가 가치 있는 노드의 배터리 도달 범위 안에 있는지 표시</td></tr>
+<tr><td>\(R^a(v')>\delta\)</td><td>도착점 \(v'\)가 가치 있는 표적이라는 조건</td><td>관계의 기준이 되는 표적을 고름</td></tr>
+<tr><td>\(d(v,v')\)</td><td>그래프에서 \(v\)와 \(v'\) 사이 최단경로 길이</td><td>도로망/노드 연결을 따라 필요한 최소 이동 단계</td></tr>
+<tr><td>\(B\)</td><td>배터리 한도</td><td>드론이 이동할 수 있는 최대 단계 수와 비교</td></tr>
+<tr><td>\(\land\)</td><td>AND, 그리고</td><td>두 조건이 동시에 성립해야 관계가 성립</td></tr>
+</table>
+<div class="step"><span class="num">4-2 매칭</span><span>“핵심 표적까지 배터리 \(B\) 이내로 갈 수 있는 노드들을 묶는다”는 설명입니다. 정확히는 \(v'\)가 가치 있는 표적이고 \(v\)에서 \(v'\)까지의 최단거리 \(d(v,v')\)가 배터리 한도 \(B\) 이하일 때 \(v\sim_\delta v'\)라고 표시합니다.</span></div>
+<div class="explain warn"><b>중요한 방향성:</b> 이 원래 관계식은 대칭이라고 보장되지 않습니다. 식에서 \(R^a(v')>\delta\)만 요구하기 때문입니다. 즉 \(v'\)는 valuable 노드지만 \(v\)는 valuable이 아닐 수도 있습니다. 그래서 바로 동네로 나누지 않고 다음 단계에서 동치관계의 폐쇄를 취합니다.</div>
+
+<h4>수식 4-3. 동치관계 폐쇄(equivalence closure)</h4>
+<div class="formula">\[\approx_\delta=\text{the reflexive, symmetric, and transitive closure of }\sim_\delta\]</div>
+<table><tr><th>용어</th><th>수학적 의미</th><th>직관</th></tr>
+<tr><td>reflexive (반사성)</td><td>\(v\approx_\delta v\)</td><td>모든 노드는 자기 자신과 같은 동네</td></tr>
+<tr><td>symmetric (대칭성)</td><td>\(v\approx_\delta w\Rightarrow w\approx_\delta v\)</td><td>A가 B와 같은 동네면 B도 A와 같은 동네</td></tr>
+<tr><td>transitive (추이성)</td><td>\(v\approx_\delta w\land w\approx_\delta z\Rightarrow v\approx_\delta z\)</td><td>A와 B, B와 C가 연결되면 A·B·C를 같은 묶음으로 취급</td></tr>
+<tr><td>closure (폐쇄)</td><td>위 세 성질을 만족하도록 관계를 확장</td><td>원래 관계를 동치관계로 완성</td></tr></table>
+<div class="step"><span class="num">4-3 매칭</span><span>“관계 \(\sim_\delta\)를 동치관계가 되도록 닫는다”는 설명입니다. 관계를 대칭·추이적으로 확장하므로, 한 쌍씩 직접 배터리 거리 조건을 만족하지 않더라도 중간 노드를 거쳐 연결된 노드들이 같은 동네에 포함될 수 있습니다.</span></div>
+<div class="explain warn"><b>자주 생기는 오해:</b> 동네 안의 모든 두 노드 사이 거리가 반드시 \(B\) 이하라는 뜻은 아닙니다. 원래 관계의 연결 사슬을 동치관계로 묶은 결과이므로, 사슬의 양 끝은 \(B\)보다 멀 수 있습니다. \(B\)는 관계를 만드는 각 연결에서 적용되는 기준입니다.</div>
+
+<h4>수식 4-4. 몫집합(quotient set)으로 동네 집합 생성</h4>
+<div class="formula">\[\hat V=V/\!\approx_\delta\]</div>
+<table><tr><th>항(term)</th><th>뜻</th><th>해석</th></tr>
+<tr><td>\(V\)</td><td>원래 도시 그래프의 전체 노드 집합</td><td>축소 전의 모든 위치</td></tr>
+<tr><td>\(\approx_\delta\)</td><td>동치관계</td><td>어떤 노드끼리 같은 동네인지 결정</td></tr>
+<tr><td>\(/\!\approx_\delta\)</td><td>동치관계에 따른 몫집합 연산</td><td>같은 동치류에 속한 노드들을 하나의 묶음으로 바꿈</td></tr>
+<tr><td>\(\hat V\)</td><td>동네들의 집합</td><td>축소된 그래프에서 사용할 새로운 계산 단위</td></tr>
+<tr><td>\(\hat v\in\hat V\)</td><td>하나의 동네(동치류)</td><td>원래 노드 여러 개를 포함하는 부분집합</td></tr></table>
+<div class="step"><span class="num">4-4 매칭</span><span>“동네들의 분할 \(\hat V\)를 구성한다”는 설명입니다. 여기서 \(V/\!\approx_\delta\)는 숫자 나눗셈이 아닙니다. 원래 노드 집합 \(V\)를 동치류별로 묶어 만든 몫집합이며, 각 동네는 원래 노드들의 부분집합입니다.</span></div>
+
+<h4>네 식을 한 번에 연결하면</h4>
+<div class="step"><span class="num">①</span><span>\(R^a(v)>\delta\): 먼저 공격자에게 가치 있는 표적을 판별합니다.</span></div>
+<div class="step"><span class="num">②</span><span>\(d(v,v')\leq B\): 가치 있는 표적에 배터리 한도 내로 접근할 수 있는 노드 관계를 만듭니다.</span></div>
+<div class="step"><span class="num">③</span><span>\(\approx_\delta\): 그 관계를 반사·대칭·추이성을 가진 동치관계로 확장해 연결된 노드들을 묶습니다.</span></div>
+<div class="step"><span class="num">④</span><span>\(\hat V=V/\!\approx_\delta\): 각 동치류를 하나의 동네로 보고 전체 도시를 동네 집합으로 축소합니다.</span></div>
+<div class="explain good"><b>한 문장 요약:</b> “공격자 보상이 임계값 δ를 넘는 표적을 먼저 찾고, 배터리 B로 접근 가능한 노드 관계를 만든 다음, 그 관계의 연결 성분에 해당하는 동치류들을 동네로 정의해 도시 그래프를 축소한다.”</div>
+<h4>설명용 숫자 예시 (논문 실험값 아님)</h4>
+<p>예를 들어 \(\delta=10\), \(B=3\)이라고 가정합니다. 노드 C의 보상이 \(R^a(C)=15\)라면 C는 δ-valuable입니다. A에서 C까지 최단거리가 2라면 \(A\sim_\delta C\)입니다. C에서 D까지도 관계가 성립한다면 동치관계 폐쇄를 통해 A, C, D가 같은 동네에 포함될 수 있습니다. 이 예시는 관계와 폐쇄의 차이를 설명하기 위한 가상 사례입니다.</p>
+<h4>논문에서 여기까지 한 이유와 다음 단계</h4>
+<p>논문은 모든 가능한 도시 분할을 생성하고 분할마다 게임을 풀어 최선의 분할을 고르는 방식은 계산상 비현실적이라고 설명합니다. δ-coarsening은 모든 분할을 탐색하지 않고도, 공격자와 방어자가 각자 하나의 동네에 머무르는 전략으로 문제를 축소할 수 있는 구조적 조건을 찾으려는 장치입니다. 다만 이 네 식만으로 δ-coarsening의 모든 조건이 충족되는 것은 아닙니다. Section 5의 Definition 4에서 배터리 분리, 동네 수, 단일 공격자의 보상 수집 가능성, 방어자 존재의 효용 영향 등 네 가지 조건을 별도로 정의합니다.</p>
+<div class="explain warn"><b>정확성 주의:</b> 위 네 식은 Step 4의 핵심 관계와 동네 구성 과정을 설명합니다. 논문의 δ-coarsening 성립 여부는 이 식들만으로 판정하지 않고 Section 5의 네 가지 정식 조건까지 확인해야 합니다. δ-coarsening을 찾지 못하면 논문은 weighted K-Means 휴리스틱을 사용하며, 이 경우 Section 5의 이론적 근사 보장이 자동으로 성립하지 않습니다.</div></div>
 
 <div class="card"><h3>Step 5. 동네별 1대1 하위게임과 λ (Section 4.2)</h3>
 <div class="formula">u(xᵈ,sᵃ,λ)=λu(xᵈ,sᵃ)+(1−λ)u(⊥,sᵃ)</div>

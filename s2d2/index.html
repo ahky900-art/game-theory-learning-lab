@@ -13,8 +13,43 @@ window.MathJax = {tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],pr
 <header><div class="wrap" style="padding:0"><span class="tag">PAPER-BASED INTERACTIVE GUIDE</span><h1>S2D2 Interactive Learning Lab</h1><div class="sub">드론 방어 논문을 수식 → 그림 → 숫자 예제 → 알고리즘 순서로 이해하는 대시보드. 원문 Section 3–6의 구조와 용어를 따르며, 조작 가능한 숫자 예제는 이해를 위한 교육용 toy example입니다.</div></div></header>
 <main class="wrap">
 <div class="nav" id="nav">
-<button class="active" data-tab="s3">3. 게임 모형</button><button data-tab="derivation">수식 도출 과정</button><button data-tab="terms">수식 기호 사전</button><button data-tab="s41">4.1 그래프 축소</button><button data-tab="s42">4.2 단일 드론 게임</button><button data-tab="s43">4.3 메타게임</button><button data-tab="s5">5. 이론적 보장</button><button data-tab="s6">6. 실험·배경지식</button>
+<button class="active" data-tab="s3">3. 게임 모형</button><button data-tab="mapping">보고서 매칭표</button><button data-tab="derivation">수식 도출 과정</button><button data-tab="terms">수식 기호 사전</button><button data-tab="s41">4.1 그래프 축소</button><button data-tab="s42">4.2 단일 드론 게임</button><button data-tab="s43">4.3 메타게임</button><button data-tab="s5">5. 이론적 보장</button><button data-tab="s6">6. 실험·배경지식</button>
 </div>
+<section id="mapping" class="section">
+<div class="card"><h2>보고서 ↔ 대시보드 설명 매칭 및 완전성 점검</h2>
+<p class="muted">기준 자료: <b>Game_Theory_TA_v6.pptx</b> (19 slides), 발표 본문·발표자 노트 포함. 이 표는 보고서의 각 슬라이드가 대시보드의 어느 설명으로 뒷받침되는지, 그리고 현재 설명만으로 이해가 완결되는지를 점검합니다.</p>
+<div class="explain warn"><b>점검 결론:</b> 현재 대시보드는 논문의 큰 구조와 핵심 주제는 모두 다루지만, 보고서의 모든 수식과 예제를 완전히 설명한다고 볼 수는 없습니다. 특히 13~16페이지의 알고리즘 세부식, LP/MILP 제약식, 근사오차 증명 연결, 11페이지의 41-node 예제는 추가 보강이 필요합니다. 아래의 '부분'은 해당 주제를 다루지만 발표자료에 나온 세부 논리를 모두 재현하지 못한다는 뜻입니다.</div>
+<h3>슬라이드별 매칭표</h3>
+<table><tr><th>보고서</th><th>보고서 핵심</th><th>대시보드 위치</th><th>판정</th><th>남은 보완</th></tr>
+<tr><td>1</td><td>논문 제목·저자</td><td>페이지 상단 및 논문 메타정보</td><td>일치</td><td>없음</td></tr>
+<tr><td>2</td><td>논문 개요: Model·S2D2·Theory·Experiment</td><td>Step 0~10, Method 전체 계산 흐름, Section 3~6</td><td>일치</td><td>보고서 요약과 대시보드 목차 연결만 추가</td></tr>
+<tr><td>3</td><td>문제 동기·도시 기반시설·전문가 중요도</td><td>Section 6 실험 배경지식</td><td>부분</td><td>동기 슬라이드의 Sejong 예시와 전문가 평가 근거를 분리 설명</td></tr>
+<tr><td>4</td><td>난제와 S2D2 3단계 개요</td><td>Method 전체 계산 흐름, Step 4~9</td><td>일치</td><td>발표 도식의 입력·출력과 알고리즘 변수 대응표</td></tr>
+<tr><td>5</td><td>Stackelberg duopoly와 SSE 비교</td><td>Step 2, Step 3 및 Section 3.2</td><td>부분</td><td>SPNE와 SSE 차이, tie-breaking, general-sum인 이유를 표로 정리</td></tr>
+<tr><td>6</td><td>도시 그래프·A,D,B,P,Rᵃ,Pᵈ 기호</td><td>Step 0, 수식 기호 사전, 공격자의 경로 제약</td><td>일치</td><td>보고서 예시 그래프의 노드·간선·보상값 대입 예제</td></tr>
+<tr><td>7</td><td>방어자의 순수전략·정책·상태별 대응</td><td>Section 3, 방어자의 순차적 전략</td><td>부분</td><td>상태(state), 관측, 정책(policy), B-tuple 각 항의 원문 정의를 식으로 분해</td></tr>
+<tr><td>8</td><td>공격자의 경로·타격 시점·정보구조</td><td>Section 3, 공격자의 경로 제약</td><td>부분</td><td>경로 길이 B, 타격시점 집합, 최대 P회 타격, 포획 우선순위의 수식 유도</td></tr>
+<tr><td>9</td><td>1회 플레이의 시간별 전개와 보수 계산</td><td>Section 3 toy example, Step 0~3</td><td>부분</td><td>t=1,2,3 시점별 공격자 위치·방어자 위치·관측·포획·누적보수 표</td></tr>
+<tr><td>10</td><td>혼합전략·공격자 최적반응·역진귀납·SSE</td><td>Step 1~3, 수식 도출 과정</td><td>부분</td><td>공격자 best response 제약을 고정하고 leader LP로 전환하는 전개, tie-breaking의 약부등식</td></tr>
+<tr><td>11</td><td>41-node toy graph: 순수전략 취약성과 혼합전략</td><td>현재는 일반 혼합전략 설명</td><td>미흡</td><td>원문 Figure 3의 41개 노드, 6개 표적, 3개 순수전략 혼합 사례를 별도 재현</td></tr>
+<tr><td>12</td><td>Step 1: δ-coarsening과 local restriction</td><td>Step 4, Section 4.1</td><td>부분</td><td>동네 안에 각 측 최대 1대, 각 드론의 local strategy restriction 및 Thm 1 오차 연결</td></tr>
+<tr><td>13</td><td>Step 2a: λ 확률, 두 세계, ScanAttack·전략 pruning</td><td>Step 5~6, Section 4.2</td><td>부분</td><td>λ와 1−λ 기대효용 식, ScanAttack 하한, 공격/방어 지배전략 제거 조건, λ grid의 역할</td></tr>
+<tr><td>14</td><td>Step 2b: 공격전략별 LP, best-response 제약</td><td>Step 3 및 수식 도출 과정</td><td>부분</td><td>원문 LP 목적함수·모든 s.t.·확률 simplex·weak inequality·공격전략별 반복 계산을 원문 기호 그대로 수록</td></tr>
+<tr><td>15</td><td>Step 3: Meta-game MIP, Lemma 2 threshold, MILP</td><td>Step 7~9, Section 4.3~4.4</td><td>부분</td><td>Eq. (3) 원식의 변수·목적함수·s.t.와 조각별 선형화의 보조변수·Big-M 또는 SOS 제약을 원문 순서대로 전개</td></tr>
+<tr><td>16</td><td>ε-SSE 정의, Theorem 1·2, Definition 4</td><td>Step 10, Section 5</td><td>부분</td><td>ε와 ε′의 정의, 오차항이 더해지는 이유, δ-coarsening 네 조건을 증명 흐름에 맞춰 연결</td></tr>
+<tr><td>17</td><td>80개 도시 성능·2.84×·runtime·expert cities</td><td>Section 6 실험 배경지식 및 결과</td><td>부분</td><td>보고서의 지표 정의와 평균 산식, Figure 5 수치 읽는 법을 표·그림과 연결</td></tr>
+<tr><td>18</td><td>Robustness와 논문 한계</td><td>Section 6 실험·배경지식, 한계</td><td>부분</td><td>ADR, A, D, P, B 변화별 실험 조건과 관찰 결과를 개별 대응</td></tr>
+<tr><td>19</td><td>결론·기여·한계 요약</td><td>Step 0~10, Section 5~6</td><td>일치</td><td>결론의 각 문장을 근거가 되는 Method/Theory/Experiment로 역링크</td></tr>
+</table>
+<h3>우선 보완해야 할 부분</h3>
+<div class="step"><span class="num">1순위</span><span><b>슬라이드 14 — LP 원식.</b> 이 논문의 local game을 이해하는 핵심입니다. 공격자의 특정 전략 \(s_a^*\)를 최적반응으로 유지시키는 조건을 수식화하고, 그 조건 아래 방어자의 혼합전략을 최적화하는 과정이 완전히 보여야 합니다.</span></div>
+<div class="step"><span class="num">2순위</span><span><b>슬라이드 15 — MIP → MILP.</b> 보고서에서 가장 수식이 압축된 부분입니다. 목적함수, 제약조건, 이진변수와 연속변수, piecewise-linear utility 근사, 선형화 보조변수를 구분해야 합니다.</span></div>
+<div class="step"><span class="num">3순위</span><span><b>슬라이드 13 — pruning.</b> ScanAttack과 공격·방어 전략 제거 규칙이 왜 안전한지, 어떤 부등식으로 최적반응 후보를 제거하는지 보여야 합니다.</span></div>
+<div class="step"><span class="num">4순위</span><span><b>슬라이드 16 — 이론적 보장.</b> \(\epsilon=2AP\delta+2\epsilon'\)의 각 오차가 어느 단계에서 발생하는지 연결해야 합니다.</span></div>
+<div class="step"><span class="num">5순위</span><span><b>슬라이드 11 — 41-node example.</b> 순수전략이 왜 취약한지, 세 순수전략의 혼합이 왜 각 가치 동네의 coverage를 높이는지 실제 숫자로 재현해야 합니다.</span></div>
+<div class="explain good"><b>현재 판단:</b> 대시보드는 논문 구조를 안내하는 학습 가이드로는 유효하지만, 보고서 11~16페이지를 수식만 보고 독립적으로 재현할 수 있는 수준은 아닙니다. 특히 LP/MILP 원식과 pruning의 세부 조건은 '설명 완료'로 표시하면 안 됩니다.</div>
+</div>
+</section>
 <section id="derivation" class="section">
 <div class="card"><h2>논문 수식 도출 과정 — Method를 수식의 흐름으로 읽기</h2>
 <p class="muted">원문 Mutzari et al. (2025), Section 3.2, 4.1–4.4, 5를 기준으로 구성했습니다. 논문에 직접 제시된 식과 설명을 위한 중간 해석을 구분합니다.</p>

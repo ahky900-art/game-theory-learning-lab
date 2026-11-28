@@ -5,11 +5,15 @@
 :root{--bg:#0b1220;--panel:#121d30;--panel2:#18263d;--line:#2a3b55;--txt:#edf3fb;--muted:#a8b7ca;--blue:#67b7ff;--red:#ff8b85;--green:#71d6ad;--yellow:#ffd479}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.55 Inter,system-ui,-apple-system,"Noto Sans KR",sans-serif}header{padding:28px max(20px,calc((100vw - 1180px)/2));background:linear-gradient(120deg,#12223b,#182e49);border-bottom:1px solid var(--line)}h1{margin:0 0 6px;font-size:clamp(25px,4vw,38px)}h2{font-size:22px;margin:0 0 12px}h3{font-size:17px;margin:0 0 8px}.sub{color:var(--muted);max-width:850px}.wrap{max-width:1180px;margin:auto;padding:20px}.nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.nav button,.btn{border:1px solid var(--line);background:var(--panel);color:var(--txt);padding:9px 13px;border-radius:10px;cursor:pointer}.nav button.active,.btn.primary{background:#21466b;border-color:#3b78ac}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:17px;margin-bottom:14px}.wide{grid-column:1/-1}.muted{color:var(--muted)}.tag{display:inline-block;padding:3px 8px;border-radius:20px;background:#203a55;color:#bfe3ff;font-size:12px;margin:0 5px 5px 0}.formula{background:#091321;border:1px solid #31445f;border-radius:10px;padding:13px;overflow:auto;font:15px/1.8 ui-monospace,Consolas,monospace;color:#d7eaff}.explain{border-left:3px solid var(--blue);padding:8px 12px;color:#d5e0ed;background:#15243a;border-radius:0 8px 8px 0;margin:9px 0}.warn{border-left-color:var(--yellow)}.good{border-left-color:var(--green)}label{display:block;color:var(--muted);font-size:13px;margin:12px 0 4px}input[type=range]{width:100%;accent-color:var(--blue)}input[type=number]{background:#091321;color:white;border:1px solid var(--line);padding:7px;border-radius:8px;width:90px}.metric{font-size:28px;font-weight:750}.bar{height:12px;background:#26364d;border-radius:20px;overflow:hidden}.bar span{display:block;height:100%;background:var(--blue)}table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:9px;border-bottom:1px solid var(--line);text-align:left}th{color:#b9cbe0}.svgbox{background:#091321;border:1px solid var(--line);border-radius:12px;padding:10px}svg{width:100%;height:auto}.node{stroke:#d5e7fa;stroke-width:1.4}.nodeText{fill:#06101d;font-size:11px;font-weight:700}.edge{stroke:#526780;stroke-width:2}.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted)}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}.section{display:none}.section.active{display:block}.step{display:flex;gap:12px;align-items:flex-start;margin:10px 0}.num{background:#244b70;color:white;border-radius:8px;padding:3px 8px;font-weight:bold}.small{font-size:12px}.pill{display:inline-block;border:1px solid var(--line);border-radius:9px;padding:6px 9px;margin:3px}.equation-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.footer{color:var(--muted);font-size:12px;padding:20px 0 40px}button:focus,input:focus{outline:2px solid var(--blue);outline-offset:2px}
 @media(max-width:760px){.grid,.equation-row{grid-template-columns:1fr}.wrap{padding:14px}.card{padding:14px}}
-</style></head><body>
+</style><script>
+window.MathJax = {tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],processEscapes:true},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head><body>
 <header><div class="wrap" style="padding:0"><span class="tag">PAPER-BASED INTERACTIVE GUIDE</span><h1>S2D2 Interactive Learning Lab</h1><div class="sub">드론 방어 논문을 수식 → 그림 → 숫자 예제 → 알고리즘 순서로 이해하는 대시보드. 원문 Section 3–6의 구조와 용어를 따르며, 조작 가능한 숫자 예제는 이해를 위한 교육용 toy example입니다.</div></div></header>
 <main class="wrap">
 <div class="nav" id="nav">
-<button class="active" data-tab="s3">3. 게임 모형</button><button data-tab="derivation">수식 도출 과정</button><button data-tab="s41">4.1 그래프 축소</button><button data-tab="s42">4.2 단일 드론 게임</button><button data-tab="s43">4.3 메타게임</button><button data-tab="s5">5. 이론적 보장</button><button data-tab="s6">6. 실험 결과</button>
+<button class="active" data-tab="s3">3. 게임 모형</button><button data-tab="derivation">수식 도출 과정</button><button data-tab="terms">수식 기호 사전</button><button data-tab="s41">4.1 그래프 축소</button><button data-tab="s42">4.2 단일 드론 게임</button><button data-tab="s43">4.3 메타게임</button><button data-tab="s5">5. 이론적 보장</button><button data-tab="s6">6. 실험·배경지식</button>
 </div>
 <section id="derivation" class="section">
 <div class="card"><h2>논문 수식 도출 과정 — Method를 수식의 흐름으로 읽기</h2>
@@ -114,6 +118,115 @@
 <div class="step"><span class="num">③</span><span><b>Section 4.2:</b> 동네마다 1대1 하위게임을 λ별로 풉니다. 전략 열거·지배전략 제거·DFS·동적계획법으로 후보를 줄입니다.</span></div>
 <div class="step"><span class="num">④</span><span><b>Section 4.3–4.4:</b> 동네별 효용을 모아 방어 드론 배분 Meta-game을 만들고 MIP → MILP로 풉니다.</span></div>
 <div class="step"><span class="num">⑤</span><span><b>Section 5–6:</b> 조건부 근사 SSE를 증명하고, 실제 도시 데이터에서 baseline과 효용·계산시간을 비교합니다.</span></div></div>
+</section>
+
+<section id="terms" class="section">
+<div class="card"><h2>수식 기호 사전 — 식을 읽기 전에 확인할 것</h2>
+<p>아래는 원문에서 반복적으로 쓰이는 기호를 역할별로 분류한 것입니다. 첨자 \(a\)와 \(d\)는 각각 attacker(공격자), defender(방어자)를 뜻합니다. 모자 기호 \(\hat{}\)는 원래 도시 전체가 아니라 coarsening 이후의 동네 단위 변수를 뜻합니다.</p>
+<h3>1. 게임과 그래프</h3>
+<table><tr><th>기호</th><th>읽는 법·뜻</th><th>수식에서의 역할</th></tr>
+<tr><td>\(G=(V,E)\)</td><td>그래프 G, 노드 집합 V와 간선 집합 E</td><td>도시의 연결 구조</td></tr>
+<tr><td>\(V=\{1,\ldots,m\}\)</td><td>1부터 m까지의 노드</td><td>표적이 될 수 있는 모든 위치</td></tr>
+<tr><td>\(E\subseteq \{\{v,w\}:v,w\in V\}\)</td><td>노드 사이의 연결</td><td>한 단계 이동 가능한 관계</td></tr>
+<tr><td>\(N[v]\)</td><td>닫힌 이웃 집합</td><td>현재 노드와 인접 노드, 즉 다음 이동 후보</td></tr>
+<tr><td>\(d(v,w)\)</td><td>최단 경로 거리</td><td>두 노드 사이 이동에 필요한 최소 단계</td></tr>
+<tr><td>\(R^a(v)\)</td><td>공격자 보상</td><td>노드 v를 성공적으로 공격했을 때 공격자의 이익, 0 이상</td></tr>
+<tr><td>\(P^d(v)\)</td><td>방어자 페널티</td><td>노드 v가 공격당했을 때 방어자의 손실, 음수</td></tr>
+<tr><td>\(A,D\)</td><td>공격 드론 수, 방어 드론 수</td><td>양측 자원 수</td></tr>
+<tr><td>\(P,B\)</td><td>Payload, Battery</td><td>드론 1대가 수행할 수 있는 최대 공격 횟수와 이동/체공 단계</td></tr></table>
+<h3>2. 전략과 효용</h3>
+<table><tr><th>기호</th><th>읽는 법·뜻</th><th>수식에서의 역할</th></tr>
+<tr><td>\(s_d,s_a\)</td><td>방어자·공격자의 순수전략</td><td>확률이 아니라 하나의 구체적인 정책/경로</td></tr>
+<tr><td>\(\mathcal S^d,\mathcal S^a\)</td><td>순수전략 집합</td><td>각 플레이어가 선택할 수 있는 모든 순수전략</td></tr>
+<tr><td>\(\mathbf x_d\)</td><td>방어자의 혼합전략</td><td>방어 순수전략 각각에 부여한 선택확률의 벡터/분포</td></tr>
+<tr><td>\(\Delta(\mathcal S^d)\)</td><td>확률 단체(simplex)</td><td>전략 집합 위의 모든 확률분포. 확률은 0 이상이고 총합은 1</td></tr>
+<tr><td>\(u^a,u^d\)</td><td>공격자·방어자 효용</td><td>전략 조합의 결과를 수치화한 보수</td></tr>
+<tr><td>\(\mathsf{BR}^a(\mathbf x_d)\)</td><td>공격자의 최적반응 집합</td><td>주어진 방어 혼합전략에 대해 공격자 효용을 최대화하는 전략들</td></tr>
+<tr><td>\(\arg\max\)</td><td>최댓값을 만드는 변수/전략</td><td>최댓값 자체가 아니라 그 최댓값을 달성하는 선택을 반환</td></tr>
+<tr><td>\(\mathbb E\)</td><td>기댓값</td><td>확률로 가중한 평균 효용</td></tr>
+<tr><td>\(\sum\)</td><td>시그마, 합계</td><td>아래 첨자 조건에 해당하는 항을 전부 더함</td></tr></table>
+<h3>3. Coarsening 및 하위게임</h3>
+<table><tr><th>기호</th><th>읽는 법·뜻</th><th>수식에서의 역할</th></tr>
+<tr><td>\(\delta\)</td><td>스케일/보상 컷오프</td><td>공격 보상이 δ 이하인 노드를 근사 과정에서 중요하지 않은 것으로 취급</td></tr>
+<tr><td>\(\hat V=\{\hat v_1,\ldots,\hat v_k\}\)</td><td>동네들의 집합</td><td>원래 노드 집합을 더 큰 단위로 묶은 결과</td></tr>
+<tr><td>\(\hat v\subseteq V\)</td><td>하나의 동네</td><td>원래 그래프 노드들의 부분집합</td></tr>
+<tr><td>\(\approx_\delta\)</td><td>δ에 따른 동치관계</td><td>같은 동네에 묶어야 하는 노드 관계의 동치폐쇄</td></tr>
+<tr><td>\(\lambda\)</td><td>방어자 존재 확률</td><td>해당 동네에 방어 드론이 배치되어 있을 확률</td></tr>
+<tr><td>\(\bot\)</td><td>방어자 없음/미관측 상태(문맥에 따라)</td><td>해당 동네에 방어자가 없는 경우를 표현</td></tr>
+<tr><td>\(\tilde u\)</td><td>물결표가 붙은 근사 효용</td><td>하위게임에서 계산한 효용을 조각별 선형함수로 근사한 값</td></tr>
+<tr><td>\(\theta_a\)</td><td>공격자 효용 임계값</td><td>공격자가 선택한 동네와 선택하지 않은 동네를 best-response 조건으로 구분</td></tr>
+<tr><td>\(x_a(\hat v)\)</td><td>공격자 동네 선택 변수</td><td>해당 동네를 공격 대상으로 선택하면 1, 아니면 0</td></tr>
+<tr><td>\(x_d(\hat v)\)</td><td>동네별 방어 coverage</td><td>해당 동네에 방어 드론이 존재할 확률, 0~1의 연속변수</td></tr></table>
+<h3>4. 최적화 표기</h3>
+<table><tr><th>표기</th><th>정확한 의미</th><th>읽는 방법</th></tr>
+<tr><td>\(\max_x f(x)\)</td><td>목적함수 최대화</td><td>가능한 x 중 f(x)가 가장 큰 선택을 찾는다</td></tr>
+<tr><td>\(\min_x f(x)\)</td><td>목적함수 최소화</td><td>가능한 x 중 f(x)가 가장 작은 선택을 찾는다</td></tr>
+<tr><td>\(\text{s.t.}\)</td><td>subject to</td><td>아래 조건을 모두 만족해야 한다</td></tr>
+<tr><td>\(x\in\{0,1\}\)</td><td>이진변수</td><td>선택/비선택, 실행/미실행</td></tr>
+<tr><td>\(0\leq x\leq1\)</td><td>연속변수</td><td>0과 1 사이의 실수값, 여기서는 확률</td></tr>
+<tr><td>\(\forall\)</td><td>for all, 모든</td><td>가능한 모든 전략/노드에 대해 조건이 성립해야 함</td></tr>
+<tr><td>\(\in\)</td><td>원소/소속</td><td>어떤 집합에 속함</td></tr>
+<tr><td>\(\leq,\geq\)</td><td>이하, 이상</td><td>제약조건의 상한/하한</td></tr>
+<tr><td>\(\prod\)</td><td>곱집합/곱</td><td>여러 집합의 조합. 전략공간을 각 동네 전략공간의 조합으로 표현</td></tr>
+<tr><td>\(\lvert S\rvert\)</td><td>집합 S의 크기</td><td>원소의 개수</td></tr>
+<tr><td>\(\|\cdot\|_\infty\)</td><td>무한대 노름</td><td>모든 입력/전략 조합에서 발생하는 오차의 최댓값</td></tr></table>
+<div class="explain warn"><b>주의할 첨자:</b> \(u^a\)의 위첨자 a는 거듭제곱이 아니라 attacker의 약자입니다. 마찬가지로 \(x_d\)의 아래첨자 d도 변수의 차수가 아니라 defender를 뜻합니다. 반면 \(u^a_{1,0}\)의 아래첨자 1,0은 문맥상 공격 드론 1대·방어 드론 0대 조건을 뜻합니다.</div>
+</div>
+</section>
+
+<section id="experiment" class="section">
+<div class="card"><h2>6. 실험 이해 — 결과표를 읽기 위한 배경지식</h2>
+<p>이 절은 논문의 실험 설계를 재현 가능한 수준으로 읽기 위한 안내입니다. 실험은 실제 공격 사건을 재현한 것이 아니라, 실제 도시의 도로망에 합성 또는 전문가 기반 효용을 부여하고 알고리즘의 계산시간과 모형상 방어자 효용을 비교한 것입니다.</p>
+<div class="explain warn"><b>해석의 핵심:</b> 도시 지도/도로망은 실제 데이터이지만, 노드별 공격 보상과 방어 페널티는 별도로 생성하거나 전문가가 평가한 값입니다. 따라서 결과는 현실적인 공간구조를 사용한 모형 실험이지, 실제 드론 공격 피해를 예측해 검증한 결과는 아닙니다.</div>
+<h3>6.1 실험 설계의 배경</h3>
+<table><tr><th>항목</th><th>논문 설정</th><th>왜 이렇게 했나?</th></tr>
+<tr><td>도시 네트워크</td><td>80개 도시, OSM 도로망, OSMnx로 수집</td><td>수천~수십만 노드의 실제 공간 연결 구조에서 확장성 확인</td></tr>
+<tr><td>동네 수</td><td>\(|\hat V|=8D\)</td><td>방어 자원보다 동네가 충분히 많게 하되, 동네가 지나치게 작거나 방어확률이 과도하게 높아지는 것을 피하려는 설정</td></tr>
+<tr><td>합성 효용</td><td>Log-normal \((\mu=0,\sigma=4)\), Zipf \((s=2)\)</td><td>높은 중요도의 노드는 드물고, 다수 노드는 낮은 보상을 갖는 희소한 분포를 모사</td></tr>
+<tr><td>전문가 평가</td><td>7명의 안보·방위 전문가, 6개 도시</td><td>임의 분포뿐 아니라 시설 중요도 판단을 반영한 사례 확인</td></tr>
+<tr><td>기본 파라미터</td><td>\(A=D=4,\ B=6,\ P=4\)</td><td>공격·방어 자원과 이동/공격 제약의 기준 설정</td></tr>
+<tr><td>반복</td><td>보고된 결과는 100회 반복</td><td>무작위 효용 생성·전략 샘플링에 따른 변동 완화</td></tr>
+<tr><td>컴퓨터</td><td>Intel Core i9-10980XE, RAM 256GB</td><td>실행시간 결과가 특정 하드웨어에서 측정되었음을 명시</td></tr></table>
+<h3>6.2 합성 효용 분포 이해</h3>
+<p><b>Log-normal 분포</b>는 로그를 취한 값이 정규분포를 따르는 양의 분포입니다. 오른쪽 꼬리가 길어 소수의 노드가 매우 큰 보상을 갖게 할 수 있습니다.</p>
+<div class="formula">\(X\sim\operatorname{LogNormal}(\mu,\sigma)\)<br>\(\ln X\sim\mathcal N(\mu,\sigma^2)\)</div>
+<p>여기서 논문은 \(\mu=0,\sigma=4\)를 사용했습니다. \(\mu\)는 로그값의 평균, \(\sigma\)는 로그값의 표준편차입니다. \(\sigma=4\)는 값의 편차가 상당히 큰 분포를 만듭니다.</p>
+<p><b>Zipf 분포</b>는 순위가 낮아질수록 발생확률/빈도가 급격히 감소하는 멱법칙 계열 분포입니다. 소수의 높은 순위 항목이 큰 비중을 차지하는 상황을 모사합니다.</p>
+<div class="formula">\(P(X=k)=\frac{k^{-s}}{\sum_{j=1}^{N}j^{-s}}\quad(k=1,\ldots,N)\)</div>
+<p>\(k\)는 순위 또는 정수 등급, \(s\)는 분포의 기울기를 결정하는 지수입니다. 논문 설정은 \(s=2\)입니다. 위 식은 Zipf 분포를 이해하기 위한 표준 정규화 형태이며, 논문은 실험에서 Zipf 분포의 파라미터 \(s=2\)를 보고합니다.</p>
+<h3>6.3 전문가 기반 효용은 어떻게 만들었나?</h3>
+<p>전문가 7명에게 시설 유형별 중요도를 1~5점으로 평가하게 했습니다. 1은 중요도가 매우 낮음, 5는 핵심적으로 중요함을 뜻합니다. 6개 도시의 지역을 직접 특정해 평가하게 한 것이 아니라, 전문가가 잘 아는 도시를 떠올리되 어느 도시인지 공개하지 않은 상태에서 유형별 중요도를 매겼습니다. 지도 주석 인터페이스에서 시설·지역 폴리곤을 그리고 그 영역의 효용값을 부여했습니다.</p>
+<table><tr><th>전문가 평가 중앙값</th><th>시설 유형</th></tr>
+<tr><td>5</td><td>국가 지도부 건물, 보안시설, 전력·천연가스 시설</td></tr>
+<tr><td>4</td><td>정부 운영시설, 병원, 상하수도·위생시설, 산업·위험물 지역, 교통 허브, 고밀도 지역</td></tr>
+<tr><td>3</td><td>지방자치단체 건물, 관광지, 금융지구, 상업·오락지역, 스포츠 경기장</td></tr></table>
+<p>방어자 페널티는 공격자 보상에 무작위 교란을 적용해 부여했습니다. 이 방식은 두 효용 사이에 어느 정도 상관관계는 남기면서, 공격자 보상과 방어자 손실이 정확히 반대인 zero-sum 게임이 되는 것을 피합니다.</p>
+<h3>6.4 비교군 Greedy Baseline은 무엇인가?</h3>
+<div class="step"><span class="num">1</span><span>각 동네에서 공격자 보상이 큰 상위 \(P\)개 노드를 확인합니다.</span></div>
+<div class="step"><span class="num">2</span><span>그 노드들의 방어자 페널티 절댓값 합을 동네별 가중치로 둡니다.</span></div>
+<div class="formula">\(\text{weight}(\hat v)=\sum_{v\in\operatorname{TopP}(\hat v)}|P^d(v)|\)<br>\(\hat p_d(\hat v)=D\cdot\frac{\text{weight}(\hat v)}{\sum_{\hat w\in\hat V}\text{weight}(\hat w)}\)</div>
+<div class="step"><span class="num">3</span><span>각 방어 드론은 해당 확률분포에 따라 동네를 선택하고, 동네 안의 임의 노드에서 출발합니다.</span></div>
+<div class="step"><span class="num">4</span><span>이후 가장 가까운 관측 공격 드론과 공격자가 노리는 상위 표적 중 방어 페널티가 큰 표적을 향해 최단경로로 한 단계씩 이동합니다.</span></div>
+<p>즉 Greedy는 각 시점의 가까운 위협을 따라가는 규칙 기반 전략입니다. S2D2처럼 전체 공격·방어 전략의 상호작용을 Stackelberg 최적화로 계산하지 않습니다. 저자들은 이 baseline이 더 빠르지만 방어자 효용은 낮아지는 경향을 보고합니다.</p>
+<h3>6.5 결과를 읽는 방법</h3>
+<table><tr><th>실험</th><th>논문에서 보고한 결과</th><th>해석</th></tr>
+<tr><td>80개 도시 합성 효용</td><td>S2D2 실행시간은 baseline 대비 약 15배 수준, 최대 도시에서 단일 CPU 기준 약 3.5시간. 방어자 효용은 평균 약 2.84배</td><td>계산시간을 더 쓰고 모형상 방어자 효용을 개선</td></tr>
+<tr><td>6개 전문가 주석 도시</td><td>\(\#\lambda=3\)에서는 한 도시에서 baseline이 우세. \(\#\lambda=10\)으로 늘리자 S2D2가 6개 도시 모두 우세</td><td>λ 표본점이 너무 적으면 조각별 선형 근사가 거칠어질 수 있음</td></tr>
+<tr><td>전문가 주석 6개 도시 평균</td><td>기본 설정에서 baseline 대비 약 1.34배, 공격자 효용 추정에 ±10% 오차를 준 경우 평균 약 1.41배</td><td>효용 추정 오차가 있어도 성능이 유지되는 경향</td></tr>
+<tr><td>공격자/방어자 비율</td><td>\(ADR\in\{0.5,1,2\}\)로 변화</td><td>공격 드론 수가 늘어도 실행시간·효용비율과 뚜렷한 상관이 관찰되지 않았다고 보고</td></tr>
+<tr><td>방어 드론 수</td><td>방어 드론 수 증가에 따라 방어자 효용 증가</td><td>추가 방어자원이 더 많은 고가치 노드를 보호</td></tr>
+<tr><td>Battery 변화</td><td>배터리 용량 증가 시 실행시간이 지수적으로 증가하는 경향</td><td>가능한 경로 수가 배터리 단계에 따라 급격히 늘어남</td></tr></table>
+<h3>6.6 결과 해석 시 반드시 짚을 한계</h3>
+<ul>
+<li><b>실제 도로망 ≠ 실제 공격 데이터:</b> 공간 네트워크는 OpenStreetMap 기반이지만 보상·페널티는 합성 생성 또는 전문가 평가입니다.</li>
+<li><b>전문가 점수 ≠ 실제 피해액:</b> 1~5 중요도 점수는 시설 중요도에 대한 판단이며, 실제 인명피해·경제손실의 확률적 추정치가 아닙니다.</li>
+<li><b>비교 기준의 한계:</b> Greedy baseline 하나와 비교한 결과만으로 모든 기존 방어 알고리즘보다 우월하다고 결론 내릴 수 없습니다.</li>
+<li><b>시간-효용 trade-off:</b> S2D2는 더 높은 모형상 방어자 효용을 위해 더 긴 계산시간을 사용합니다.</li>
+<li><b>근사 정리와 실험 성능은 별개:</b> δ-coarsening 조건을 만족하지 않는 도시에서도 좋은 실험 결과가 나올 수 있지만, 그 경우 이론적 ε-SSE 보장이 자동으로 적용되는 것은 아닙니다.</li>
+<li><b>λ 이산화 민감도:</b> λ 표본점 수를 3에서 10으로 늘렸을 때 결과가 바뀐 사례는 근사 해상도와 계산시간 사이의 trade-off를 보여줍니다.</li>
+</ul>
+<div class="explain good"><b>발표에서 쓸 핵심 해석:</b> “저자들은 실제 도시의 공간 네트워크에 합성 및 전문가 기반 효용을 결합해 80개 도시와 6개 전문가 주석 도시에서 S2D2를 Greedy와 비교했다. S2D2는 대체로 더 높은 방어자 효용을 보였지만 계산시간이 더 길었고, λ 근사 해상도에 따라 결과가 달라졌다. 따라서 이 결과는 실제 공격 피해 예측의 검증이라기보다, 제안한 게임이론적 방어전략의 계산 성능과 효용 개선 가능성을 평가한 실험으로 해석해야 한다.”</div>
+</div>
 </section>
 <section id="s3" class="section active">
 <div class="card"><h2>3. Sequential Stackelberg Security Game</h2><p class="muted">도시는 점과 선으로 표현됩니다. 점은 공격 대상, 선은 드론이 이동할 수 있는 연결입니다. 공격자는 경로와 공격 시점을 정하고, 방어자는 관측한 공격자 위치에 반응해 다음 이동을 결정합니다.</p>

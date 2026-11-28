@@ -7,7 +7,7 @@
 <style>
 :root{--bg:#f6f7f9;--fg:#20242b;--mut:#68717d;--card:#fff;--bd:#dfe3e8;--pri:#244f9e;--soft:#edf2fb;--ok:#eaf6ef;--warn:#fff5df}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.65 system-ui,-apple-system,"Malgun Gothic",sans-serif}
-header{background:var(--card);border-bottom:1px solid var(--bd);padding:14px 22px;display:flex;gap:20px;align-items:center;flex-wrap:wrap;position:sticky;top:0;z-index:10}header h1{font-size:17px;margin:0}nav{display:flex;gap:6px;flex-wrap:wrap}button{font:inherit;cursor:pointer}nav button,.btn{border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--fg);padding:7px 13px}nav button.active,.btn.primary{background:var(--pri);border-color:var(--pri);color:white}
+header{background:var(--card);border-bottom:1px solid var(--bd);padding:14px 22px;display:flex;gap:20px;align-items:center;flex-wrap:wrap;position:sticky;top:0;z-index:10}header h1{font-size:17px;margin:0}nav{display:flex;gap:6px;flex-wrap:wrap}button{font:inherit;cursor:pointer}nav button,.btn,.nav-link{border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--fg);padding:7px 13px;text-decoration:none;display:inline-block}nav button.active,.btn.primary{background:var(--pri);border-color:var(--pri);color:white}
 #app{max-width:1280px;margin:auto;padding:20px}.grid{display:grid;grid-template-columns:220px minmax(0,1fr);gap:18px;align-items:start}@media(max-width:800px){.grid{grid-template-columns:1fr}aside{position:static!important}}
 aside{position:sticky;top:82px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px}aside button{width:100%;text-align:left;border:0;background:transparent;padding:9px;border-radius:7px;color:var(--fg)}aside button.active{background:var(--soft);color:var(--pri);font-weight:700}
 .panel,.doc{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:20px 24px;min-width:0}.doc h1{font-size:23px}.doc h2{font-size:19px;border-bottom:1px solid var(--bd);padding-bottom:5px;margin-top:1.8em}.doc h3{font-size:16px;margin-top:1.5em}.doc table{border-collapse:collapse;display:block;overflow-x:auto}.doc th,.doc td{border:1px solid var(--bd);padding:7px 10px;vertical-align:top}.doc th{background:#f0f2f5}.doc blockquote{margin:12px 0;padding:10px 14px;background:#f2f4f7;border-left:4px solid var(--pri)}.doc code{background:#f1f3f6;padding:2px 4px;border-radius:4px}
@@ -32,7 +32,7 @@ aside{position:sticky;top:82px;background:var(--card);border:1px solid var(--bd)
 </style></head>
 <body>
 <header><h1>IMEN582 · Game Theory Exam Lab</h1><nav>
-<button class="active" data-tab="learn">문제별 학습</button><button data-tab="phrase">영문 판독 훈련</button><button data-tab="blind">블라인드 풀이</button><button data-tab="dashboard">학습 현황</button>
+<button class="active" data-tab="learn">문제별 학습</button><button data-tab="phrase">영문 판독 훈련</button><button data-tab="blind">블라인드 풀이</button><button data-tab="dashboard">학습 현황</button><a class="nav-link" href="./s2d2/">드론 방어 · S2D2</a>
 </nav></header><main id="app"></main>
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
